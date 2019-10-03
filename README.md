@@ -20,3 +20,8 @@ Add this as a Browser Source and replace `yourchannel` with your Twitch username
 For example:
 https://www.instafluff.tv/EmoteDisplay?channel=instafluff
 ```
+
+## Credits ##
+Thank you too all the participants of this project!
+
+**Gilokk0, That_MS_Gamer, Instafluff, Instafriend, ChatTranslator, TrueOlive, Ella_Fint, simrose4u, vincentmet, roberttables, LilyHazel, opti_21, prasanthlouis, TheHugoDahl, AntiPixelated, MaryJoStaebler, merkurrz, 87krille, QeraiX, julieee22, Kasuken, DutchGamer46, Slimenian, ShadowNeverSeen, AdorisArts, bernicemakes, BooobieTrap, thiagovgamg**
