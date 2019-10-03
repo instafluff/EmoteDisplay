@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Emotes on Stream!</title>
+    <script src="comfy.min.js"></script>
+  </head>
+  <body>
+    <h1 id="text"></h1>
+    <script>
+    const params = new URLSearchParams( location.search );
+      ComfyJS.onChat = ( user, message, self, flags, extra ) => {
+        if( extra.messageEmotes ) {
+          var emotes = Object.keys( extra.messageEmotes );
+          var emoteId = emotes[ Math.floor( Math.random() * emotes.length ) ];
+          document.querySelector( "#text" ).innerHTML = `<img width="320" src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0"/>`;
+        }
+      }
+      ComfyJS.Init( params.get( "channel" ) );
+    </script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "emotedisplay",
+  "version": "1.0.0",
+  "description": "Display the latest Twitch Chat Emote on stream!",
+  "main": "index.js",
+  "dependencies": {
+    "webwebweb": "^1.1.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/instafluff/EmoteDisplay.git"
+  },
+  "keywords": [
+    "Instafluff"
+  ],
+  "author": "Instafluff",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/instafluff/EmoteDisplay/issues"
+  },
+  "homepage": "https://github.com/instafluff/EmoteDisplay#readme"
+}
