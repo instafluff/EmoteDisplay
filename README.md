@@ -13,6 +13,10 @@ We built this Chat Emote Overlay live on Twitch for the Coding Cafe!
 ## Instructions ##
 
 Add this as a Browser Source and replace `yourchannel` with your Twitch username!
+
+[https://www.instafluff.tv/EmoteDisplay?channel=yourchannel](https://www.instafluff.tv/EmoteDisplay?channel=yourchannel)
+
 ```
-https://www.instafluff.tv/EmoteDisplay?channel=yourchannel
+For example:
+https://www.instafluff.tv/EmoteDisplay?channel=instafluff
 ```
