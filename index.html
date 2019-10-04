@@ -1,20 +1,73 @@
 <html>
-  <head>
-    <title>Emotes on Stream!</title>
-    <script src="web/comfy.min.js"></script>
-  </head>
-  <body>
-    <h1 id="text"></h1>
-    <script>
-    const params = new URLSearchParams( location.search );
-      ComfyJS.onChat = ( user, message, self, flags, extra ) => {
-        if( extra.messageEmotes ) {
-          var emotes = Object.keys( extra.messageEmotes );
-          var emoteId = emotes[ Math.floor( Math.random() * emotes.length ) ];
-          document.querySelector( "#text" ).innerHTML = `<img width="320" src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0"/>`;
+
+<head>
+  <title>Emotes on Stream!</title>
+  <script src="web/comfy.min.js"></script>
+</head>
+
+<body>
+  <h1 id="text"></h1>
+  <script>
+    const params = new URLSearchParams(location.search);
+    var bttvEmotes = []
+    // Fetches global bttv emotes
+    fetch('https://api.betterttv.net/2/emotes')
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        bttvEmotes = data.emotes
+      })
+      .catch(err => {
+        console.error(err)
+      })
+
+    // Fecthes Channel specific bttv emotes
+    fetch(`https://api.betterttv.net/2/channels/${params.get("channel")}`)
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        data.emotes.forEach(emotePush)
+        function emotePush(emote) {
+          bttvEmotes.push(emote)
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
+
+    ComfyJS.onChat = (user, message, self, flags, extra) => {
+      var parsed = message.split(' ');
+      var bttvE = []
+      var randHTML = []
+      parsed.forEach(parseEm);
+      function parseEm(message) {
+        function btCode(emote) {
+          return emote.code === message
+        }
+        var emFind = bttvEmotes.find(btCode)
+        if (emFind) {
+          bttvE.push(emFind.id)
         }
       }
-      ComfyJS.Init( params.get( "channel" ) );
-    </script>
-  </body>
+      if (bttvE.length > 0) {
+        var emoteId = bttvE[Math.floor(Math.random() * bttvE.length)];
+        randHTML.push(`<img width="320" src="https://cdn.betterttv.net/emote/${emoteId}/3x"/>`);
+      }
+
+      if (extra.messageEmotes) {
+        var emotes = Object.keys(extra.messageEmotes);
+        var emoteId = emotes[Math.floor(Math.random() * emotes.length)];
+        randHTML.push(`<img width="320" src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0"/>`);
+      }
+
+      // Pick random emote html if message includes both twitch and bttv emotes
+      document.querySelector("#text").innerHTML = randHTML[Math.floor(Math.random() * randHTML.length)]
+      randHTML = []
+    }
+    ComfyJS.Init(params.get("channel"));
+  </script>
+</body>
+
 </html>
