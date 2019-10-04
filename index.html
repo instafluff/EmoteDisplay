@@ -63,8 +63,10 @@
       }
 
       // Pick random emote html if message includes both twitch and bttv emotes
-      document.querySelector("#text").innerHTML = randHTML[Math.floor(Math.random() * randHTML.length)]
-      randHTML = []
+      if (randHTML.length > 0) {
+        document.querySelector("#text").innerHTML = randHTML[Math.floor(Math.random() * randHTML.length)]
+        randHTML = []
+      }
     }
     ComfyJS.Init(params.get("channel"));
   </script>
