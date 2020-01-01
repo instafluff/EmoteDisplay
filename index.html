@@ -24,7 +24,7 @@
         return response.json()
       })
       .then(data => {
-        bttvEmotes = data.emotes
+        bttvEmotes = data.emotes || [];
       })
       .catch(err => {
         console.error(err)
