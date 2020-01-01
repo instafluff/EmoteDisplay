@@ -17,7 +17,7 @@
   <h1 id="text"></h1>
   <script>
     const params = new URLSearchParams(location.search);
-    var bttvEmotes = []
+    let bttvEmotes = [];
     // Fetches global bttv emotes
     fetch('https://api.betterttv.net/2/emotes')
       .then(response => {
