@@ -14,54 +14,71 @@
 </head>
 
 <body>
-  <h1 id="text"></h1>
+  <div id="text"></div>
+  <style>
+    #text {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #text > img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
   <script>
     const params = new URLSearchParams(location.search);
-    let bttvEmotes = [];
-    // Fetches global bttv emotes
-    fetch('https://api.betterttv.net/2/emotes')
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        bttvEmotes = data.emotes || [];
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    const channel = params.get("channel");
+    let thirdPartyEmotes = [];
 
-    // Fecthes Channel specific bttv emotes
-    fetch(`https://api.betterttv.net/2/channels/${params.get("channel")}`)
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        data.emotes.forEach(emotePush)
-        function emotePush(emote) {
-          bttvEmotes.push(emote)
-        }
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    // Fetches Channel specific bttv emotes
+    fetch(`https://api.betterttv.net/2/channels/${channel}`)
+        .then(async response => {
+            const data = await response.json();
+            const bttvEmotes = data.emotes.map(emote => ({
+                text: emote.code,
+                url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
+            }));
+            thirdPartyEmotes.push(...bttvEmotes);
+        })
+        .catch(console.error)
 
-    ComfyJS.onChat = ( user, message, flags, self, extra ) => {
-      var parsed = message.split(' ');
-      var bttvE = []
+    // Fetches Channel specific ffz emotes
+    fetch(`https://api.frankerfacez.com/v1/room/${channel}`)
+        .then(async response => {
+            const data = await response.json();
+            Object.keys(data.sets).forEach(setID => {
+                const ffzEmotes = data.sets[setID].emoticons.map(emote => ({
+                    text: emote.name,
+                    url: (emote.urls['4'] || emote.urls['2'] || emote.urls['1']).replace(/^\/\//, 'https://')
+                }));
+                thirdPartyEmotes.push(...ffzEmotes);
+            });
+        })
+        .catch(console.error)
+
+    ComfyJS.onChat = (user, message, flags, self, extra) => {
+      var words = message.split(' ');
+      var usedThirdPartyEmotes = []
       var randHTML = []
-      parsed.forEach(parseEm);
-      function parseEm(message) {
-        function btCode(emote) {
-          return emote.code === message
-        }
-        var emFind = bttvEmotes.find(btCode)
-        if (emFind) {
-          bttvE.push(emFind.id)
-        }
-      }
-      if (bttvE.length > 0) {
-        var emoteId = bttvE[Math.floor(Math.random() * bttvE.length)];
-        randHTML.push(`<img width="320" src="https://cdn.betterttv.net/emote/${emoteId}/3x"/>`);
+
+      words.forEach(word => {
+          const emote = thirdPartyEmotes.find(e => e.text === word);
+          if(emote) {
+            usedThirdPartyEmotes.push(emote.url)
+            console.log(emote)
+          }
+      });
+      
+      if (usedThirdPartyEmotes.length > 0) {
+        var emoteUrl = usedThirdPartyEmotes[Math.floor(Math.random() * usedThirdPartyEmotes.length)];
+        randHTML.push(`<img width="320" src="${emoteUrl}"/>`);
       }
 
       if (extra.messageEmotes) {
@@ -76,7 +93,7 @@
         randHTML = []
       }
     }
-    ComfyJS.Init(params.get("channel"));
+    ComfyJS.Init(channel);
   </script>
 </body>
 
