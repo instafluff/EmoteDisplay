@@ -16,19 +16,16 @@
 <body>
   <div id="text"></div>
   <style>
-    #text {
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    body {
+      margin: 0;
     }
 
     #text > img {
-      max-width: 100%;
-      max-height: 100%;
-	  width: 320px;
+      max-width: 320px;
+      max-height: 320px;
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
     }
   </style>
   <script>
@@ -84,13 +81,13 @@
 
       if (usedThirdPartyEmotes.length > 0) {
         var emoteUrl = usedThirdPartyEmotes[Math.floor(Math.random() * usedThirdPartyEmotes.length)];
-        randHTML.push(`<img width="320" src="${emoteUrl}"/>`);
+        randHTML.push(`<img src="${emoteUrl}"/>`);
       }
 
       if (extra.messageEmotes) {
         var emotes = Object.keys(extra.messageEmotes);
         var emoteId = emotes[Math.floor(Math.random() * emotes.length)];
-        randHTML.push(`<img width="320" src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0"/>`);
+        randHTML.push(`<img src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0"/>`);
       }
 
       // Pick random emote html if message includes both twitch and bttv emotes
