@@ -19,6 +19,7 @@
     body {
       margin: 0;
     }
+    
     #text {
       display: flex;
       width: 320px;
@@ -45,7 +46,7 @@
         url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
       }));
       thirdPartyEmotes.push(...bttvEmotes);
-    } 
+    }
 
     // Fetches global specific bttv emotes
     fetch(`https://api.betterttv.net/2/emotes`)
@@ -83,7 +84,7 @@
           console.log(emote)
         }
       });
-      
+
       if (usedThirdPartyEmotes.length > 0) {
         var emoteUrl = usedThirdPartyEmotes[Math.floor(Math.random() * usedThirdPartyEmotes.length)];
         randHTML.push(`<img src="${emoteUrl}"/>`);
