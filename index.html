@@ -37,31 +37,38 @@
     const channel = params.get("channel");
     let thirdPartyEmotes = [];
 
-    // Fetches Channel specific bttv emotes
-    fetch(`https://api.betterttv.net/2/channels/${channel}`)
-        .then(async response => {
-            const data = await response.json();
-            const bttvEmotes = data.emotes.map(emote => ({
-                text: emote.code,
-                url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
-            }));
-            thirdPartyEmotes.push(...bttvEmotes);
-        })
-        .catch(console.error)
+    const handleBTTVEmotes = async response => {
+      const data = await response.json();
+      const bttvEmotes = data.emotes.map(emote => ({
+        text: emote.code,
+        url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
+      }));
+      thirdPartyEmotes.push(...bttvEmotes);
+    } 
 
-    // Fetches Channel specific ffz emotes
+    // Fetches global specific bttv emotes
+    fetch(`https://api.betterttv.net/2/emotes`)
+      .then(handleBTTVEmotes)
+      .catch(console.error)
+
+    // Fetches channel specific bttv emotes
+    fetch(`https://api.betterttv.net/2/channels/${channel}`)
+      .then(handleBTTVEmotes)
+      .catch(console.error)
+
+    // Fetches channel specific ffz emotes
     fetch(`https://api.frankerfacez.com/v1/room/${channel}`)
-        .then(async response => {
-            const data = await response.json();
-            Object.keys(data.sets).forEach(setID => {
-                const ffzEmotes = data.sets[setID].emoticons.map(emote => ({
-                    text: emote.name,
-                    url: (emote.urls['4'] || emote.urls['2'] || emote.urls['1']).replace(/^\/\//, 'https://')
-                }));
-                thirdPartyEmotes.push(...ffzEmotes);
-            });
-        })
-        .catch(console.error)
+      .then(async response => {
+        const data = await response.json();
+        Object.keys(data.sets).forEach(setID => {
+          const ffzEmotes = data.sets[setID].emoticons.map(emote => ({
+            text: emote.name,
+            url: (emote.urls['4'] || emote.urls['2'] || emote.urls['1']).replace(/^\/\//, 'https://')
+          }));
+          thirdPartyEmotes.push(...ffzEmotes);
+        });
+      })
+      .catch(console.error)
 
     ComfyJS.onChat = (user, message, flags, self, extra) => {
       var words = message.split(' ');
@@ -69,11 +76,11 @@
       var randHTML = []
 
       words.forEach(word => {
-          const emote = thirdPartyEmotes.find(e => e.text === word);
-          if(emote) {
-            usedThirdPartyEmotes.push(emote.url)
-            console.log(emote)
-          }
+        const emote = thirdPartyEmotes.find(e => e.text === word);
+        if(emote) {
+          usedThirdPartyEmotes.push(emote.url)
+          console.log(emote)
+        }
       });
       
       if (usedThirdPartyEmotes.length > 0) {
