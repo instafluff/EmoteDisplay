@@ -19,8 +19,6 @@
     #text {
       position: absolute;
       top: 0;
-      right: 0;
-      bottom: 0;
       left: 0;
       display: flex;
       align-items: center;
@@ -30,6 +28,7 @@
     #text > img {
       max-width: 100%;
       max-height: 100%;
+	  width: 320px;
     }
   </style>
   <script>
@@ -44,7 +43,7 @@
         url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
       }));
       thirdPartyEmotes.push(...bttvEmotes);
-    } 
+    }
 
     // Fetches global specific bttv emotes
     fetch(`https://api.betterttv.net/2/emotes`)
@@ -82,7 +81,7 @@
           console.log(emote)
         }
       });
-      
+
       if (usedThirdPartyEmotes.length > 0) {
         var emoteUrl = usedThirdPartyEmotes[Math.floor(Math.random() * usedThirdPartyEmotes.length)];
         randHTML.push(`<img width="320" src="${emoteUrl}"/>`);
