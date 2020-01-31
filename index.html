@@ -31,6 +31,8 @@
   <script>
     const params = new URLSearchParams(location.search);
     const channel = params.get("channel");
+    const timeout = params.get("timeout");
+    let timeoutId;
     let thirdPartyEmotes = [];
 
     const handleBTTVEmotes = async response => {
@@ -42,6 +44,19 @@
       thirdPartyEmotes.push(...bttvEmotes);
     }
 
+    // If timeout param exists create a timeout to clear img tag after set amount of seconds.
+    const createTimeout = timeout => {
+      if (timeout) {
+        const timeInMilliseconds = timeout * 1000;
+
+        clearTimeout(timeoutId);
+
+        timeoutId = setTimeout(() => {
+          document.querySelector("#text").innerHTML = "";
+        }, timeInMilliseconds);
+      }
+    }
+    
     // Fetches global specific bttv emotes
     fetch(`https://api.betterttv.net/2/emotes`)
       .then(handleBTTVEmotes)
@@ -93,7 +108,9 @@
       // Pick random emote html if message includes both twitch and bttv emotes
       if (randHTML.length > 0) {
         document.querySelector("#text").innerHTML = randHTML[Math.floor(Math.random() * randHTML.length)]
-        randHTML = []
+        randHTML = [] 
+        
+        createTimeout(timeout);
       }
     }
     ComfyJS.Init(channel);
