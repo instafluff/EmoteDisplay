@@ -24,7 +24,7 @@ You can also add an optional value in the url to have the emote disappear after 
 
 ```
 For example:
-https://www.instafluff.tv/EmoteDisplay?channel=instafluff&timeout=timeoutInSeconds
+https://www.instafluff.tv/EmoteDisplay?channel=instafluff&timeout=3
 ```
 
 ## Credits ##
