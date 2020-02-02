@@ -18,9 +18,13 @@ Add this as a Browser Source and replace `yourchannel` with your Twitch username
 
 [https://www.instafluff.tv/EmoteDisplay?channel=yourchannel](https://www.instafluff.tv/EmoteDisplay?channel=yourchannel)
 
+You can also add an optional value in the url to have the emote disappear after a set number of seconds. Just replace `timeoutInSeconds` with a number:
+
+[https://www.instafluff.tv/EmoteDisplay?channel=yourchannel&timeout=timeoutInSeconds](https://www.instafluff.tv/EmoteDisplay?channel=yourchannel&timeout=timeoutInSeconds)
+
 ```
 For example:
-https://www.instafluff.tv/EmoteDisplay?channel=instafluff
+https://www.instafluff.tv/EmoteDisplay?channel=instafluff&timeout=3
 ```
 
 ## Credits ##
