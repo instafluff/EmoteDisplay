@@ -96,18 +96,26 @@
 
       if (usedThirdPartyEmotes.length > 0) {
         var emoteUrl = usedThirdPartyEmotes[Math.floor(Math.random() * usedThirdPartyEmotes.length)];
-        randHTML.push(`<img src="${emoteUrl}"/>`);
+        var emoteElement = new Image();
+        emoteElement.src = emoteUrl;
+        randHTML.push(emoteElement);
       }
 
       if (extra.messageEmotes) {
         var emotes = Object.keys(extra.messageEmotes);
         var emoteId = emotes[Math.floor(Math.random() * emotes.length)];
-        randHTML.push(`<img src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0"/>`);
+        var emoteElement = new Image();
+        emoteElement.src = `https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0`;
+        randHTML.push(emoteElement);
       }
 
       // Pick random emote html if message includes both twitch and bttv emotes
       if (randHTML.length > 0) {
-        document.querySelector("#text").innerHTML = randHTML[Math.floor(Math.random() * randHTML.length)]
+        var emote = randHTML[Math.floor(Math.random() * randHTML.length)];
+        emote.onload = () => {
+          document.querySelector('#text').innerHTML = emote.outerHTML;
+        }
+
         randHTML = [] 
         
         createTimeout(timeout);
