@@ -32,7 +32,8 @@
     const params = new URLSearchParams(location.search);
     const channel = params.get("channel");
     const timeout = params.get("timeout");
-    let timeoutId;
+    const arraySize = params.get("size") || 1;
+    let timeoutIds = [];
     let thirdPartyEmotes = [];
 
     const handleBTTVEmotes = async response => {
@@ -45,15 +46,18 @@
     }
 
     // If timeout param exists create a timeout to clear img tag after set amount of seconds.
-    const createTimeout = timeout => {
+    const createTimeout = (timeout, element) => {
       if (timeout) {
         const timeInMilliseconds = timeout * 1000;
 
-        clearTimeout(timeoutId);
-
-        timeoutId = setTimeout(() => {
-          document.querySelector("#text").innerHTML = "";
+        const timeoutId = setTimeout(() => {
+          document.querySelector("#text").removeChild(element);
         }, timeInMilliseconds);
+
+        timeoutIds.push(timeoutId);
+        if (timeoutIds.length > arraySize) {
+          clearTimeout(timeoutIds.shift());
+        }
       }
     }
     
@@ -113,12 +117,18 @@
       if (randHTML.length > 0) {
         var emote = randHTML[Math.floor(Math.random() * randHTML.length)];
         emote.onload = () => {
-          document.querySelector('#text').innerHTML = emote.outerHTML;
+          const textElement = document.querySelector('#text');
+
+          textElement.appendChild(emote);
+
+          if (textElement.childElementCount > arraySize) {
+            textElement.removeChild(textElement.firstChild);
+          }
+
+          createTimeout(timeout, emote);
         }
 
         randHTML = [] 
-        
-        createTimeout(timeout);
       }
     }
     ComfyJS.Init(channel);
