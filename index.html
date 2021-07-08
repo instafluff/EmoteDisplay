@@ -1,138 +1,144 @@
 <html>
 
 <head>
-  <title>Emotes on Stream!</title>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135113520-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'UA-135113520-1');
-  </script>
-  <script src="web/comfy.min.js"></script>
+	<title>Emotes on Stream!</title>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135113520-1"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'UA-135113520-1');
+	</script>
+	<script src="web/comfy.min.js"></script>
 </head>
 
 <body>
-  <div id="text"></div>
-  <style>
-    body {
-      margin: 0;
-    }
+	<div id="text"></div>
+	<style>
+	body {
+		margin: 0;
+	}
 
-    #text > img {
-      max-width: 320px;
-      max-height: 320px;
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-    }
-  </style>
-  <script>
-    const params = new URLSearchParams(location.search);
-    const channel = params.get("channel");
-    const timeout = params.get("timeout");
-    const arraySize = params.get("size") || 1;
-    let timeoutIds = [];
-    let thirdPartyEmotes = [];
+	#text > img {
+		max-width: 320px;
+		max-height: 320px;
+		width: 100vw;
+		height: 100vh;
+		object-fit: contain;
+	}
+	</style>
+	<script>
+	const params = new URLSearchParams(location.search);
+	const channel = params.get("channel");
+	const timeout = params.get("timeout");
+	const arraySize = params.get("size") || 1;
+	let timeoutIds = [];
+	let thirdPartyEmotes = [];
 
-    const handleBTTVEmotes = async response => {
-      const data = await response.json();
-      const bttvEmotes = data.emotes.map(emote => ({
-        text: emote.code,
-        url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
-      }));
-      thirdPartyEmotes.push(...bttvEmotes);
-    }
+	const handleBTTVEmotes = async response => {
+		const data = await response.json();
+		const bttvEmotes = data.emotes.map(emote => ({
+			text: emote.code,
+			url: `https://cdn.betterttv.net/emote/${emote.id}/3x`
+		}));
+		thirdPartyEmotes.push(...bttvEmotes);
+	}
 
-    // If timeout param exists create a timeout to clear img tag after set amount of seconds.
-    const createTimeout = (timeout, element) => {
-      if (timeout) {
-        const timeInMilliseconds = timeout * 1000;
+	// If timeout param exists create a timeout to clear img tag after set amount of seconds.
+	const createTimeout = (timeout, element) => {
+		if (timeout) {
+			const timeInMilliseconds = timeout * 1000;
 
-        const timeoutId = setTimeout(() => {
-          document.querySelector("#text").removeChild(element);
-        }, timeInMilliseconds);
+			const timeoutId = setTimeout(() => {
+				document.querySelector("#text").removeChild(element);
+			}, timeInMilliseconds);
 
-        timeoutIds.push(timeoutId);
-        if (timeoutIds.length > arraySize) {
-          clearTimeout(timeoutIds.shift());
-        }
-      }
-    }
-    
-    // Fetches global specific bttv emotes
-    fetch(`https://api.betterttv.net/2/emotes`)
-      .then(handleBTTVEmotes)
-      .catch(console.error)
+			timeoutIds.push(timeoutId);
+			if (timeoutIds.length > arraySize) {
+				clearTimeout(timeoutIds.shift());
+			}
+		}
+	}
 
-    // Fetches channel specific bttv emotes
-    fetch(`https://api.betterttv.net/2/channels/${channel}`)
-      .then(handleBTTVEmotes)
-      .catch(console.error)
+	// Fetches global specific bttv emotes
+	fetch(`https://api.betterttv.net/2/emotes`)
+		.then(handleBTTVEmotes)
+		.catch(console.error)
 
-    // Fetches channel specific ffz emotes
-    fetch(`https://api.frankerfacez.com/v1/room/${channel}`)
-      .then(async response => {
-        const data = await response.json();
-        Object.keys(data.sets).forEach(setID => {
-          const ffzEmotes = data.sets[setID].emoticons.map(emote => ({
-            text: emote.name,
-            url: (emote.urls['4'] || emote.urls['2'] || emote.urls['1']).replace(/^\/\//, 'https://')
-          }));
-          thirdPartyEmotes.push(...ffzEmotes);
-        });
-      })
-      .catch(console.error)
+		// Fetches channel specific bttv emotes
+		fetch(`https://api.betterttv.net/2/channels/${channel}`)
+			.then(handleBTTVEmotes)
+			.catch(console.error)
 
-    ComfyJS.onChat = (user, message, flags, self, extra) => {
-      var words = message.split(' ');
-      var usedThirdPartyEmotes = []
-      var randHTML = []
+			// Fetches channel specific ffz emotes
+			fetch(`https://api.frankerfacez.com/v1/room/${channel}`)
+				.then(async response => {
+					const data = await response.json();
+					Object.keys(data.sets).forEach(setID => {
+						const ffzEmotes = data.sets[setID].emoticons.map(emote => ({
+							text: emote.name,
+							url: (emote.urls['4'] || emote.urls['2'] || emote.urls['1']).replace(/^\/\//, 'https://')
+							}));
+							thirdPartyEmotes.push(...ffzEmotes);
+						});
+					})
+					.catch(console.error)
 
-      words.forEach(word => {
-        const emote = thirdPartyEmotes.find(e => e.text === word);
-        if(emote) {
-          usedThirdPartyEmotes.push(emote.url)
-          console.log(emote)
-        }
-      });
+					ComfyJS.onChat = (user, message, flags, self, extra) => {
+						var words = message.split(' ');
+						var usedThirdPartyEmotes = []
+						var randHTML = []
 
-      if (usedThirdPartyEmotes.length > 0) {
-        var emoteUrl = usedThirdPartyEmotes[Math.floor(Math.random() * usedThirdPartyEmotes.length)];
-        var emoteElement = new Image();
-        emoteElement.src = emoteUrl;
-        randHTML.push(emoteElement);
-      }
+						words.forEach(word => {
+							const emote = thirdPartyEmotes.find(e => e.text === word);
+							if(emote) {
+								usedThirdPartyEmotes.push(emote.url)
+								console.log(emote)
+							}
+						});
 
-      if (extra.messageEmotes) {
-        var emotes = Object.keys(extra.messageEmotes);
-        var emoteId = emotes[Math.floor(Math.random() * emotes.length)];
-        var emoteElement = new Image();
-        emoteElement.src = `https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0`;
-        randHTML.push(emoteElement);
-      }
+						if (usedThirdPartyEmotes.length > 0) {
+							var emoteUrl = usedThirdPartyEmotes[Math.floor(Math.random() * usedThirdPartyEmotes.length)];
+							var emoteElement = new Image();
+							emoteElement.src = emoteUrl;
+							randHTML.push(emoteElement);
+						}
 
-      // Pick random emote html if message includes both twitch and bttv emotes
-      if (randHTML.length > 0) {
-        var emote = randHTML[Math.floor(Math.random() * randHTML.length)];
-        emote.onload = () => {
-          const textElement = document.querySelector('#text');
+						if( extra.messageEmotes ) {
+							console.dir( extra.messageEmotes );
+							var emotes = Object.keys(extra.messageEmotes);
+							var emoteId = emotes[Math.floor(Math.random() * emotes.length)];
+							var emoteElement = new Image();
+							if( emoteId.startsWith( "emotesv2_" ) ) {
+								emoteElement.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/3.0`;
+							}
+							else {
+								emoteElement.src = `https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/3.0`;
+							}
+							randHTML.push(emoteElement);
+						}
 
-          textElement.appendChild(emote);
+						// Pick random emote html if message includes both twitch and bttv emotes
+						if (randHTML.length > 0) {
+							var emote = randHTML[Math.floor(Math.random() * randHTML.length)];
+							emote.onload = () => {
+								const textElement = document.querySelector('#text');
 
-          if (textElement.childElementCount > arraySize) {
-            textElement.removeChild(textElement.firstChild);
-          }
+								textElement.appendChild(emote);
 
-          createTimeout(timeout, emote);
-        }
+								if (textElement.childElementCount > arraySize) {
+									textElement.removeChild(textElement.firstChild);
+								}
 
-        randHTML = [] 
-      }
-    }
-    ComfyJS.Init(channel);
-  </script>
-</body>
+								createTimeout(timeout, emote);
+							}
 
-</html>
+							randHTML = []
+						}
+					}
+					ComfyJS.Init(channel);
+					</script>
+				</body>
+
+				</html>
